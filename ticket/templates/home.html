@@ -1,15 +1,242 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BookIT</title>
+    <style>
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #121212;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #1f1f1f;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ff3d00;
+        }
+
+        header h1 {
+            color: #ff3d00;
+            font-size: 28px;
+            letter-spacing: 2px;
+            cursor: pointer;
+        }
+
+        nav a {
+            color: #fff;
+            margin-left: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #ff3d00;
+        }
+
+        .hero {
+            background: url('https://www.24hourmoviemarathon.com/wp-content/uploads/2014/11/imdb_top_250.jpg') no-repeat center center/cover;
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            /* color: #ff3d00; */
+        }
+
+        .hero h2 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 35px;
+            text-shadow: 1px 1px 6px rgba(0,0,0,0.7);
+        }
+
+        .search-bar {
+            background: rgba(0,0,0,0.6);
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            gap: 15px;
+            max-width: 900px;
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .search-bar select, .search-bar input[type="date"], .search-bar button {
+            padding: 12px 18px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+        }
+
+        .search-bar select, .search-bar input[type="date"] {
+            min-width: 160px;
+        }
+
+        .search-bar button {
+            background: #ff3d00;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .search-bar button:hover {
+            background: #e63600;
+        }
+
+        main {
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        h3.section-title {
+            margin-bottom: 25px;
+            font-size: 28px;
+            color: #ff3d00;
+            border-bottom: 2px solid #ff3d00;
+            display: inline-block;
+            padding-bottom: 6px;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+            gap: 25px;
+        }
+
+        .movie-card {
+            background: #222;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(255,61,0,0.5);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.05);
+        }
+
+        .movie-card img {
+            width: 100%;
+            display: block;
+        }
+
+        .movie-card .movie-info {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .movie-card .movie-info h4 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #ff3d00;
+        }
+
+        .movie-card .movie-info p {
+            font-size: 14px;
+            color: #bbb;
+        }
+
+        footer {
+            background: #1f1f1f;
+            padding: 20px 40px;
+            text-align: center;
+            color: #777;
+            margin-top: 60px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .hero h2 {
+                font-size: 32px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .search-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-bar select, .search-bar input[type="date"], .search-bar button {
+                width: 100%;
+                min-width: unset;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        
-        <h1>Home Page</h1>
-        
+    <header>
+        <h1>BookIT</h1>
+        <nav>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'movie' %}">Movies</a>
+            <a href="#">Theaters</a>
+            <a href="#">My Tickets</a>
+            <a href="{% url 'register' %}">Sign UP</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h2>Book Your Movie Tickets Instantly</h2>
+        <p>Find the best movies, showtimes, and seats near you</p>
+        <form class="search-bar" action="/search" method="GET">
+            <select name="movie" required>
+                <option value="" disabled selected>Select Movie</option>
+            </select> 
+             <select name="city" required>
+                <option value="" disabled selected>Select City</option>
+            </select>
+            <input type="date" name="date" min="" required />
+            <button type="submit">Search</button>
+        </form>
+    </section>
+
+    <main>
+
+        <h3 class="section-title">Featured Movies</h3>
+        <div class="movie-grid">
+            {% for Movie in movies %}
+            <div class="movie-card">
+                <img src="https://image.tmdb.org/t/p/w300/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg" alt="Spider-Man: No Way Home" />
+                <div class="movie-info">
+                    <h4>{{ Movie.title }}</h4>
+                    <p>{{ Movie.genre }}</p>
+                </div>
+            </div>   
+            {% endfor %}
+        </div>
     </div>
+    </main>
+
+    <footer>
+        &copy; 2025 BookIt. All rights reserved. | Designed for movie lovers.
+    </footer>
 </body>
 </html>

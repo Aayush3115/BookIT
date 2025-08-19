@@ -2,9 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib import messages
+from .models import *
+
 
 def home(request):
-    return render(request, 'home.html')
+    movies=Movie.objects.all()
+    return render(request, 'home.html',{'movies':movies})
 
 def register_page(request):
     if request.method == "POST":
@@ -50,4 +53,7 @@ def login_page(request):
     return render(request, 'login.html')
 
 
+def movie_page(request):
+    movies=Movie.objects.all()
+    return render(request, 'movies.html',{'movies':movies})
 
