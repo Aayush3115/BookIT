@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .models import *
-
+import requests
 
 def home(request):
     movies=Movie.objects.all()
@@ -54,6 +54,22 @@ def login_page(request):
 
 
 def movie_page(request):
-    movies=Movie.objects.all()
-    return render(request, 'movies.html',{'movies':movies})
+    movies = Movie.objects.all()
+    query = request.GET.get('q')  
+    search_results = None
+
+    if query:
+        api_key = "4909b29c"
+        url = f"http://www.omdbapi.com/?s={query}&apikey={api_key}&type=movie"
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            search_results = data.get("Search")  
+        else:
+            search_results = []
+
+    return render(request, "movies.html", {
+        "movies": movies,
+        "search_results": search_results
+    })
 
