@@ -9,6 +9,7 @@ urlpatterns = [
     path('register/',register_page,name='register'),
     path('',home,name='home'),
     path('movie',movie_page,name='movie'),
+    path('selectseats',select_seats,name='selectseats'),
 ]
 
 if settings.DEBUG:

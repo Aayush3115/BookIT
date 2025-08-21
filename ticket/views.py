@@ -9,7 +9,8 @@ import os
 
 def home(request):
     movies=Movie.objects.all()
-    return render(request, 'home.html',{'movies':movies})
+    showtimes=Showtime.objects.all()
+    return render(request, 'home.html',{'movies':movies,'showtimes':showtimes} )
 
 def register_page(request):
     if request.method == "POST":
@@ -75,3 +76,5 @@ def movie_page(request):
         "search_results": search_results
     })
 
+def select_seats(request):
+    return render(request,'selectseats.html')

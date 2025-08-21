@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>BookIT</title>
     <style>
-        
         * {
             box-sizing: border-box;
             margin: 0;
@@ -62,17 +62,17 @@
         .hero h2 {
             font-size: 48px;
             margin-bottom: 15px;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
         }
 
         .hero p {
             font-size: 20px;
             margin-bottom: 35px;
-            text-shadow: 1px 1px 6px rgba(0,0,0,0.7);
+            text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.7);
         }
 
         .search-bar {
-            background: rgba(0,0,0,0.6);
+            background: rgba(0, 0, 0, 0.6);
             padding: 20px;
             border-radius: 8px;
             display: flex;
@@ -83,14 +83,17 @@
             flex-wrap: wrap;
         }
 
-        .search-bar select, .search-bar input[type="date"], .search-bar button {
+        .search-bar select,
+        .search-bar input[type="date"],
+        .search-bar button {
             padding: 12px 18px;
             font-size: 16px;
             border: none;
             border-radius: 6px;
         }
 
-        .search-bar select, .search-bar input[type="date"] {
+        .search-bar select,
+        .search-bar input[type="date"] {
             min-width: 160px;
         }
 
@@ -123,7 +126,7 @@
 
         .movie-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 25px;
         }
 
@@ -131,10 +134,36 @@
             background: #222;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 0 10px rgba(255,61,0,0.5);
+            box-shadow: 0 0 10px rgba(255, 61, 0, 0.5);
             transition: transform 0.3s ease;
             cursor: pointer;
         }
+
+        .showtimes {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .showtime-btn {
+            display: inline-block;
+            padding: 8px 14px;
+            background: #ff3d00;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .showtime-btn:hover {
+            background: #e63600;
+            transform: scale(1.05);
+        }
+
 
         .movie-card:hover {
             transform: scale(1.05);
@@ -184,21 +213,24 @@
                 align-items: stretch;
             }
 
-            .search-bar select, .search-bar input[type="date"], .search-bar button {
+            .search-bar select,
+            .search-bar input[type="date"],
+            .search-bar button {
                 width: 100%;
                 min-width: unset;
             }
         }
     </style>
 </head>
+
 <body>
     <header>
         <h1>BookIT</h1>
         <nav>
             <a href="{% url 'home' %}">Home</a>
             <a href="{% url 'movie' %}">Movies</a>
-            <!-- <a href="#">Theaters</a> -->
             <a href="#">My Tickets</a>
+            <a href="#">Profile</a>
             <a href="{% url 'register' %}">Sign UP</a>
         </nav>
     </header>
@@ -209,8 +241,8 @@
         <form class="search-bar" action="/search" method="GET">
             <select name="movie" required>
                 <option value="" disabled selected>Select Movie</option>
-            </select> 
-             <select name="city" required>
+            </select>
+            <select name="city" required>
                 <option value="" disabled selected>Select City</option>
             </select>
             <input type="date" name="date" min="" required />
@@ -224,19 +256,28 @@
         <div class="movie-grid">
             {% for Movie in movies %}
             <div class="movie-card">
-                <img src="https://image.tmdb.org/t/p/w300/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg" alt="Spider-Man: No Way Home" />
+                <img src="https://image.tmdb.org/t/p/w300/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg"
+                    alt="Spider-Man: No Way Home" />
                 <div class="movie-info">
                     <h4>{{ Movie.title }}</h4>
                     <p>{{ Movie.genre }}</p>
+                    <div class="showtimes">
+                        {% for Showtime in Movie.showtimes.all %}
+                        <a href="{% url 'selectseats' %}" class="showtime-btn">
+                            {{ Showtime.time }}
+                        </a>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>   
+            </div>
             {% endfor %}
         </div>
-    </div>
+        </div>
     </main>
 
     <footer>
         &copy; 2025 BookIt. All rights reserved. | Designed for movie lovers.
     </footer>
 </body>
+
 </html>

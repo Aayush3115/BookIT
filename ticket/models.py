@@ -16,7 +16,18 @@ class Movie(models.Model):
     release_date=models.DateField
     rating=models.CharField(max_length=20)
     language=models.CharField(max_length=20)
+    # showtime=models.TimeField(null=True)
     # poster_url=models.ImageField('')
+
+    def __str__(self):
+        return self.title
+
+class Showtime(models.Model):
+    movie=models.ForeignKey(Movie, on_delete=models.CASCADE,related_name='showtimes')
+    time=models.TimeField(null=True)
+
+    def __str__(self):
+        return str(self.movie)
 
 class Theater(models.Model):
     threater_id=models.AutoField(primary_key=True)
