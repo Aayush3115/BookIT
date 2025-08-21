@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from .models import *
 import requests
+import os
+
 
 def home(request):
     movies=Movie.objects.all()
@@ -59,7 +61,7 @@ def movie_page(request):
     search_results = None
 
     if query:
-        api_key = "4909b29c"
+        api_key = os.getenv("api_key")
         url = f"http://www.omdbapi.com/?s={query}&apikey={api_key}&type=movie"
         response = requests.get(url)
         if response.status_code == 200:
