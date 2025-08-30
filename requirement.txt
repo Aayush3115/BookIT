@@ -1,0 +1,5 @@
+1.  pip install django
+2.  pip install python-dotenv
+3.  py -m pip install authentication
+4.  py -m pip install requests
+5.  
