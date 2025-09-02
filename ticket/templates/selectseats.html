@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cinema Seat Selection</title>
+  <title> Seat Selection</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -113,7 +113,10 @@
   </style>
 </head>
 <body>
-  <h1>Select Seats</h1>
+  <!-- {% for Movie in movies %}
+  <h1>{{ Movie.title }}</h1>
+  <h1>{{ Movie.genre }}</h1>
+  {% endfor %} -->
   <div class="screen">SCREEN</div>
 
   <div class="seat-map" id="seatMap"></div>
@@ -195,7 +198,7 @@
     confirmBtn.addEventListener("click", () => {
       const seatIds = selectedSeats.map(s => s.id).join(",");
       const total = selectedSeats.reduce((sum, s) => sum + s.price, 0);
-      window.location.href = `?seats=${seatIds}&total=${total}`;
+      window.location.href = `{% url 'confirmpage' %}`;
     });
   </script>
 </body>

@@ -77,4 +77,8 @@ def movie_page(request):
     })
 
 def select_seats(request):
-    return render(request,'selectseats.html')
+    movies=Movie.objects.all()
+    return render(request,'selectseats.html', {"movies": movies})
+
+def confirm_page(request):
+    return render(request,'confirmpage.html')
