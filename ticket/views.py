@@ -5,6 +5,8 @@ from django.contrib import messages
 from .models import *
 import requests
 import os
+from django.contrib.auth.decorators import login_required
+
 
 
 def home(request):
@@ -77,8 +79,81 @@ def movie_page(request):
     })
 
 def select_seats(request):
-    movies=Movie.objects.all()
-    return render(request,'selectseats.html', {"movies": movies})
+    showtime_id = request.GET.get("showtime_id")
+    if showtime_id:
+        request.session["showtime_id"] = int(showtime_id)
+
+    # Get seats already booked for this showtime
+    booked_seats = Booking.objects.filter(showtime_id=showtime_id).values_list("seats__seat_number", flat=True)
+    booked_seats = list(booked_seats)
+
+    return render(request, "selectseats.html", {"booked_seats": booked_seats})
 
 def confirm_page(request):
-    return render(request,'confirmpage.html')
+    selected_seats = request.session.get("selected_seats", [])
+    total_price = request.session.get("total_price", 0)
+
+    return render(request, "confirmpage.html", {
+        "selected_seats": selected_seats,
+        "total_price": total_price
+    })
+
+def seat_selection(request):
+    if request.method == "POST":
+        selected_seats = request.POST.get("seats")
+        total_price = request.POST.get("total_price")
+        showtime_id = request.session.get("showtime_id")
+
+        if not selected_seats or not showtime_id:
+            messages.error(request, "Please select a showtime and seats.")
+            return redirect("selectseats")
+
+        # Store seats in session for payment page
+        request.session["selected_seats"] = selected_seats.split(",")
+        request.session["total_price"] = total_price
+
+        # Redirect to payment page
+        return redirect("payment")
+
+    # if GET request, redirect to seat selection page
+    return redirect("selectseats")
+
+
+
+@login_required
+def payment_page(request):
+    selected_seats = request.session.get("selected_seats", [])
+    showtime_id = request.session.get("showtime_id")
+
+    if not showtime_id or not selected_seats:
+        messages.error(request, "Cannot complete booking. Please select seats and showtime.")
+        return redirect("selectseats")
+
+    showtime = Showtime.objects.get(id=showtime_id)
+
+    if request.method == "POST":
+        # Create booking
+        booking = Booking.objects.create(
+            user=request.user,
+            showtime=showtime
+        )
+
+        # Assign seats
+        seats = Seat.objects.filter(seat_number__in=selected_seats)
+        booking.seats.set(seats)
+        booking.save()
+
+        # Mark seats unavailable
+        for seat in seats:
+            seat.is_available = False
+            seat.save()
+
+        # Clear session
+        request.session.pop("selected_seats", None)
+        request.session.pop("total_price", None)
+        request.session.pop("showtime_id", None)
+
+        messages.success(request, "Booking confirmed!")
+        return redirect("home")  # or payment success page
+
+    return render(request, "payment.html", {"selected_seats": selected_seats})

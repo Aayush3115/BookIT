@@ -11,7 +11,9 @@ urlpatterns = [
     path('movie',movie_page,name='movie'),
     path('selectseats',select_seats,name='selectseats'),
     path('confirmpage',confirm_page,name='confirmpage'),
-]
+    path('seat_selection/', seat_selection, name='seat_selection'),
+    path('payment/', payment_page, name='payment'),
+]   
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

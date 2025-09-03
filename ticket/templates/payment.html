@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment</title>
+</head>
+<body>
+    <h1>Payment Page</h1>
+<p>Selected Seats: {{ selected_seats }}</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Simulate Payment / Confirm Booking</button>
+</form>
+</body>
+</html>

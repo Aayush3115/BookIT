@@ -1,205 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title> Seat Selection</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0d0d0d;
-      color: #fff;
-      text-align: center;
-      padding: 20px;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Seat Selection</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #0d0d0d;
+        color: #fff;
+        text-align: center;
+        padding: 20px;
+      }
 
-    h1 { margin-bottom: 10px; color: #f5f5f5; }
+      h1 {
+        margin-bottom: 10px;
+        color: #f5f5f5;
+      }
 
-    .screen {
-      background: linear-gradient(to right, #bbb, #eee, #bbb);
-      height: 40px;
-      width: 80%;
-      margin: 20px auto;
-      border-radius: 5px;
-      text-align: center;
-      color: black;
-      font-weight: bold;
-      line-height: 40px;
-      box-shadow: 0px 2px 8px rgba(255,255,255,0.3);
-    }
+      .screen {
+        background: linear-gradient(to right, #bbb, #eee, #bbb);
+        height: 40px;
+        width: 80%;
+        margin: 20px auto;
+        border-radius: 5px;
+        text-align: center;
+        color: black;
+        font-weight: bold;
+        line-height: 40px;
+        box-shadow: 0px 2px 8px rgba(255, 255, 255, 0.3);
+      }
 
-    .seat-map {
-      display: grid;
-      grid-template-columns: 50px repeat(12, 40px); /* labels + seats */
-      gap: 8px;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
+      .seat-map {
+        display: grid;
+        grid-template-columns: 50px repeat(12, 40px);
+        gap: 8px;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
 
-    .row-label {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 14px;
-    }
+      .row-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 14px;
+      }
 
-    .seat {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: bold;
-      transition: transform 0.2s, background 0.2s;
-    }
+      .seat {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        transition: transform 0.2s, background 0.2s;
+      }
 
-    .seat:hover:not(.booked) { transform: scale(1.1); opacity: 0.9; }
+      .seat:hover:not(.booked) {
+        transform: scale(1.1);
+        opacity: 0.9;
+      }
 
-    /* Seat Types */
-    .normal   { background: #2ecc71; } /* Green */
-    .vip      { background: #9b59b6; } /* Purple */
+      .normal {
+        background: #2ecc71;
+      }
+      .vip {
+        background: #9b59b6;
+      }
+      .selected {
+        background: #f1c40f !important;
+      }
+      .booked {
+        background: #e74c3c !important;
+        cursor: not-allowed;
+      }
 
-    /* States */
-    .selected { background: #f1c40f !important; }
-    .booked   { background: #e74c3c !important; cursor: not-allowed; }
+      .legend {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin: 15px 0;
+      }
+      .legend div {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 14px;
+      }
+      .legend-box {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+      }
 
-    .legend {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      margin: 15px 0;
-    }
+      .summary {
+        font-size: 18px;
+        margin-top: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 10px 20px;
+        border-radius: 8px;
+        display: inline-block;
+      }
+      .confirm-btn {
+        margin-top: 15px;
+        padding: 12px 25px;
+        font-size: 16px;
+        font-weight: bold;
+        background: #e67e22;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .confirm-btn:disabled {
+        background: #555;
+        cursor: not-allowed;
+      }
+      .confirm-btn:hover:not(:disabled) {
+        background: #d35400;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="screen">SCREEN</div>
 
-    .legend div {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 14px;
-    }
+    <div class="seat-map" id="seatMap"></div>
 
-    .legend-box { width: 20px; height: 20px; border-radius: 4px; }
+    <form id="seatForm" method="POST" action="{% url 'seat_selection' %}">
+      {% csrf_token %}
+      <input type="hidden" name="seats" id="seatsInput" />
+      <input type="hidden" name="total_price" id="priceInput" />
+      <div class="summary" id="summary">Selected: None | Total: Rs.0</div>
+      <button type="submit" id="confirmBtn" class="confirm-btn" disabled>
+        Confirm Booking
+      </button>
+    </form>
 
-    .summary {
-      font-size: 18px;
-      margin-top: 10px;
-      background: rgba(255,255,255,0.05);
-      padding: 10px 20px;
-      border-radius: 8px;
-      display: inline-block;
-    }
+    <div class="legend">
+      <div>
+        <div class="legend-box normal"></div>
+        Normal (Rs.150)
+      </div>
+      <div>
+        <div class="legend-box vip"></div>
+        VIP (Rs.300)
+      </div>
+      <div>
+        <div class="legend-box booked"></div>
+        Booked
+      </div>
+      <div>
+        <div class="legend-box selected"></div>
+        Selected
+      </div>
+    </div>
 
-    .confirm-btn {
-      margin-top: 15px;
-      padding: 12px 25px;
-      font-size: 16px;
-      font-weight: bold;
-      background: #e67e22;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
+    <!-- Pass booked seats safely from backend -->
+    {{ booked_seats|json_script:"booked-seats" }}
 
-    .confirm-btn:disabled {
-      background: #555;
-      cursor: not-allowed;
-    }
+    <script>
+      const seatMap = document.getElementById("seatMap");
+      const summary = document.getElementById("summary");
+      const confirmBtn = document.getElementById("confirmBtn");
 
-    .confirm-btn:hover:not(:disabled) { background: #d35400; }
-  </style>
-</head>
-<body>
-  <!-- {% for Movie in movies %}
-  <h1>{{ Movie.title }}</h1>
-  <h1>{{ Movie.genre }}</h1>
-  {% endfor %} -->
-  <div class="screen">SCREEN</div>
+      const bookedSeatsArray = JSON.parse(
+        document.getElementById("booked-seats").textContent
+      );
 
-  <div class="seat-map" id="seatMap"></div>
+      const rows = 10;
+      const cols = 12;
+      const seatTypes = { normal: 150, vip: 300 };
+      let selectedSeats = [];
 
-  <div class="legend">
-    <div><div class="legend-box normal"></div> Normal (Rs.150)</div>
-    <div><div class="legend-box vip"></div> VIP (Rs.300)</div>
-    <div><div class="legend-box booked"></div> Booked</div>
-    <div><div class="legend-box selected"></div> Selected</div>
-  </div>
+      function getSeatType(row) {
+        return row <= 8 ? "normal" : "vip";
+      }
 
-  <div class="summary" id="summary">Selected: None | Total: Rs.0</div>
-  <button id="confirmBtn" class="confirm-btn" disabled>Confirm Booking</button>
+      for (let r = 0; r < rows; r++) {
+        const rowLabel = String.fromCharCode(65 + r);
+        for (let c = 0; c <= cols; c++) {
+          if (c === 0) {
+            const label = document.createElement("div");
+            label.textContent = rowLabel;
+            label.classList.add("row-label");
+            seatMap.appendChild(label);
+          } else {
+            const seatId = rowLabel + c;
+            const type = getSeatType(r + 1);
+            const seat = document.createElement("div");
+            seat.classList.add("seat", type);
+            seat.textContent = c;
 
-  <script>
-    const seatMap = document.getElementById("seatMap");
-    const summary = document.getElementById("summary");
-    const confirmBtn = document.getElementById("confirmBtn");
+            if (bookedSeatsArray.includes(seatId)) seat.classList.add("booked");
+            else
+              seat.addEventListener("click", () =>
+                toggleSeat(seat, seatId, type)
+              );
 
-    const rows = 10;
-    const cols = 12;
-    const seatTypes = { normal: 150, vip: 300 };
-
-    let selectedSeats = [];
-    const bookedSeats = []; // Add booked seat IDs here if needed
-
-    function getSeatType(row) {
-      if (row <= 8) return "normal";
-      return "vip";
-    }
-
-    for (let r = 0; r < rows; r++) {
-      const rowLabel = String.fromCharCode(65 + r);
-      for (let c = 0; c <= cols; c++) {
-        if (c === 0) {
-          const label = document.createElement("div");
-          label.textContent = rowLabel;
-          label.classList.add("row-label");
-          seatMap.appendChild(label);
-        } else {
-          const seatId = rowLabel + c;
-          const type = getSeatType(r + 1);
-          const seat = document.createElement("div");
-          seat.classList.add("seat", type);
-          seat.textContent = c;
-
-          if (bookedSeats.includes(seatId)) seat.classList.add("booked");
-          else seat.addEventListener("click", () => toggleSeat(seat, seatId, type));
-
-          seatMap.appendChild(seat);
+            seatMap.appendChild(seat);
+          }
         }
       }
-    }
 
-    function toggleSeat(seat, seatId, type) {
-      if (seat.classList.contains("selected")) {
-        seat.classList.remove("selected");
-        selectedSeats = selectedSeats.filter(s => s.id !== seatId);
-      } else {
-        seat.classList.add("selected");
-        selectedSeats.push({ id: seatId, price: seatTypes[type] });
-      }
-      updateSummary();
-    }
-
-    function updateSummary() {
-      if (selectedSeats.length === 0) {
-        summary.textContent = "Selected: None | Total: Rs.0";
-        confirmBtn.disabled = true;
-        return;
+      function toggleSeat(seat, seatId, type) {
+        if (seat.classList.contains("selected")) {
+          seat.classList.remove("selected");
+          selectedSeats = selectedSeats.filter((s) => s.id !== seatId);
+        } else {
+          seat.classList.add("selected");
+          selectedSeats.push({ id: seatId, price: seatTypes[type] });
+        }
+        updateSummary();
       }
 
-      const seatList = selectedSeats.map(s => s.id).join(", ");
-      const total = selectedSeats.reduce((sum, s) => sum + s.price, 0);
-      summary.textContent = `Selected: ${seatList} | Total: Rs.${total}`;
-      confirmBtn.disabled = false;
-    }
+      function updateSummary() {
+        if (selectedSeats.length === 0) {
+          summary.textContent = "Selected: None | Total: Rs.0";
+          confirmBtn.disabled = true;
+          return;
+        }
+        const seatList = selectedSeats.map((s) => s.id).join(", ");
+        const total = selectedSeats.reduce((sum, s) => sum + s.price, 0);
+        summary.textContent = `Selected: ${seatList} | Total: Rs.${total}`;
+        confirmBtn.disabled = false;
+      }
 
-    confirmBtn.addEventListener("click", () => {
-      const seatIds = selectedSeats.map(s => s.id).join(",");
-      const total = selectedSeats.reduce((sum, s) => sum + s.price, 0);
-      window.location.href = `{% url 'confirmpage' %}`;
-    });
-  </script>
-</body>
+      confirmBtn.addEventListener("click", (event) => {
+        event.preventDefault(); // stop default form submission
+
+        // Store selected seat IDs and total
+        const seatIds = selectedSeats.map((s) => s.id).join(",");
+        const total = selectedSeats.reduce((sum, s) => sum + s.price, 0);
+
+        document.getElementById("seatsInput").value = seatIds;
+        document.getElementById("priceInput").value = total;
+
+        seatForm.submit(); // submit to seat_selection view
+      });
+    </script>
+  </body>
 </html>
