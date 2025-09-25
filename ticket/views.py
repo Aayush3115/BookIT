@@ -83,8 +83,7 @@ def select_seats(request):
     if showtime_id:
         request.session["showtime_id"] = int(showtime_id)
 
-    # Get seats already booked for this showtime
-    booked_seats = Booking.objects.filter(showtime_id=showtime_id).values_list("seats__seat_number", flat=True)
+    booked_seats = Seat.objects.filter(is_available=False).values_list("seat_number", flat=True)
     booked_seats = list(booked_seats)
 
     return render(request, "selectseats.html", {"booked_seats": booked_seats})
@@ -113,7 +112,7 @@ def seat_selection(request):
         request.session["total_price"] = total_price
 
         # Redirect to payment page
-        return redirect("payment")
+        return redirect("confirmpage")
 
     # if GET request, redirect to seat selection page
     return redirect("selectseats")

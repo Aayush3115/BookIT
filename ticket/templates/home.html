@@ -263,7 +263,7 @@
                     <p>{{ Movie.genre }}</p>
                     <div class="showtimes">
                         {% for Showtime in Movie.showtimes.all %}
-                        <a href="{% url 'selectseats' %}" class="showtime-btn">
+                        <a href="{% url 'selectseats' %}?showtime_id={{ Showtime.id }}" class="showtime-btn">
                             {{ Showtime.time }}
                         </a>
                         {% endfor %}
