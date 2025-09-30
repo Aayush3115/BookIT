@@ -137,24 +137,12 @@ def payment_page(request):
             showtime=showtime
         )
 
-        
-
         for seat_num in selected_seats:
             seat, created = Seat.objects.get_or_create(seat_number=seat_num)
             booking.seats.add(seat)
 
         booking.save()
         print(">>> Seats in session:", selected_seats)
-
-        # Assign seats
-        # seats = Seat.objects.filter(seat_number__in=selected_seats)
-        # booking.seats.set(seats)
-        # booking.save()
-
-        # # Mark seats unavailable
-        # for seat in seats:
-        #     seat.is_available = False
-        #     seat.save()
 
         # Clear session
         request.session.pop("selected_seats", None)
@@ -165,3 +153,7 @@ def payment_page(request):
         return redirect("home")  # or payment success page
 
     return render(request, "payment.html", {"selected_seats": selected_seats})
+
+@login_required
+def profile_page(request):
+    return render(request,"profile.html")

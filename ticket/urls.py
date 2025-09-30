@@ -13,6 +13,7 @@ urlpatterns = [
     path('confirmpage',confirm_page,name='confirmpage'),
     path('seat_selection/', seat_selection, name='seat_selection'),
     path('payment/', payment_page, name='payment'),
+    path('profile',profile_page,name='profile'),
 ]   
 
 if settings.DEBUG:
