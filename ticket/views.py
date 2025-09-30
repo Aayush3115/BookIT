@@ -83,7 +83,7 @@ def select_seats(request):
     if showtime_id:
         request.session["showtime_id"] = int(showtime_id)
 
-    booked_seats = Seat.objects.filter(is_available=False).values_list("seat_number", flat=True)
+    booked_seats = Booking.objects.filter(showtime_id=showtime_id).values_list("seats__seat_number", flat=True)
     booked_seats = list(booked_seats)
 
     return render(request, "selectseats.html", {"booked_seats": booked_seats})
@@ -137,15 +137,24 @@ def payment_page(request):
             showtime=showtime
         )
 
-        # Assign seats
-        seats = Seat.objects.filter(seat_number__in=selected_seats)
-        booking.seats.set(seats)
-        booking.save()
+        
 
-        # Mark seats unavailable
-        for seat in seats:
-            seat.is_available = False
-            seat.save()
+        for seat_num in selected_seats:
+            seat, created = Seat.objects.get_or_create(seat_number=seat_num)
+            booking.seats.add(seat)
+
+        booking.save()
+        print(">>> Seats in session:", selected_seats)
+
+        # Assign seats
+        # seats = Seat.objects.filter(seat_number__in=selected_seats)
+        # booking.seats.set(seats)
+        # booking.save()
+
+        # # Mark seats unavailable
+        # for seat in seats:
+        #     seat.is_available = False
+        #     seat.save()
 
         # Clear session
         request.session.pop("selected_seats", None)

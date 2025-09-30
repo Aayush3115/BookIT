@@ -38,7 +38,7 @@ class Theater(models.Model):
 class Seat(models.Model):
     seat_id=models.AutoField(primary_key=True)
     seat_number=models.CharField(max_length=5)
-    is_available=models.BooleanField(default=True)
+    # is_available=models.BooleanField(default=True)
 
 class Booking(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE)

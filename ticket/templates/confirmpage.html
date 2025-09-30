@@ -9,9 +9,9 @@
     <p><strong>Total Price:</strong> Rs. {{ total_price }}</p>
 
     Next step: payment 
-    <a href="{% url 'payment' %}" method="post">
+    <form action="{% url 'payment' %}" method="post">
         {% csrf_token %}
-        <button>Proceed to Payment</button>
-    </a>
+        <button type="submit">Proceed to Payment</button>
+    </form>
 </body>
 </html>
