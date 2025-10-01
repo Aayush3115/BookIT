@@ -1,17 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Confirm Booking</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Booking | BookIT</title>
+    <style>
+        body {
+            background: #121212;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #1f1f1f;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ff3d00;
+        }
+
+        header h1 {
+            color: #ff3d00;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 60px auto;
+            background: #1f1f1f;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(255, 61, 0, 0.4);
+            text-align: center;
+        }
+
+        h2 {
+            color: #ff3d00;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .highlight {
+            color: #ff3d00;
+            font-weight: bold;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 25px;
+            font-size: 16px;
+            background: #ff3d00;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #e63600;
+        }
+
+    
+    </style>
 </head>
 <body>
-    <h1>Confirm Your Booking</h1>
-    <p><strong>Seats:</strong> {{ selected_seats }}</p>
-    <p><strong>Total Price:</strong> Rs. {{ total_price }}</p>
+    <header>
+        <h1>BookIT</h1>
+    </header>
 
-    Next step: payment 
-    <form action="{% url 'payment' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Proceed to Payment</button>
-    </form>
+    <div class="container">
+        <h2>Confirm Your Booking</h2>
+        <p><strong>Seats:</strong> <span class="highlight">{{ selected_seats }}</span></p>
+        <p><strong>Total Price:</strong> <span class="highlight">Rs. {{ total_price }}</span></p>
+
+        <form action="{% url 'payment' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn">Proceed to Payment</button>
+        </form>
+    </div>
+
 </body>
 </html>

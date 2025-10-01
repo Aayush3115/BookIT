@@ -222,6 +222,15 @@
                 min-width: unset;
             }
         }
+
+        .section-subtitle {
+            color: #aaa;
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
     </style>
 </head>
 
@@ -231,34 +240,30 @@
         <nav>
             <a href="{% url 'home' %}">Home</a>
             <a href="{% url 'movie' %}">Movies</a>
-
             {% if user.is_authenticated %}
                 <a href="{% url 'profile' %}">Profile</a>
-            
+                
             {% else %}
-    
+                
                 <a href="{% url 'register' %}">Sign Up</a>
             {% endif %}
         </nav>
     </header>
 
+    <!-- Hero Section -->
     <section class="hero">
         <h2>Book Your Movie Tickets Instantly</h2>
         <p>Find the best movies, showtimes, and seats near you</p>
-        <form class="search-bar" action="/search" method="GET">
-            <select name="movie" required>
-                <option value="" disabled selected>Select Movie</option>
-            </select>
-            <select name="city" required>
-                <option value="" disabled selected>Select City</option>
-            </select>
-            <input type="date" name="date" min="" required />
+        <form class="search-bar" action="{% url 'movie' %}" method="GET">
+            <input type="text" name="q" placeholder="Search movies..." required
+                style="flex: 1; min-width: 250px; padding: 12px 18px; border-radius: 6px; border: none; font-size: 16px;">
             <button type="submit">Search</button>
         </form>
     </section>
 
     <main>
-        <h3 class="section-title">Featured Movies</h3>
+        <!-- Now Showing -->
+        <h3 class="section-title">Now Showing</h3>
         <div class="movie-grid">
             {% for movie in movies %}
             <div class="movie-card">
@@ -276,8 +281,47 @@
                     </div>
                 </div>
             </div>
+            {% empty %}
+            <p>No movies available at the moment.</p>
             {% endfor %}
         </div>
+
+        <!-- Coming Soon -->
+        <h3 class="section-title">Coming Soon</h3>
+        <p class="section-subtitle">Exciting new releases you won’t want to miss!</p>
+        <div class="movie-grid">
+            {% for movie in coming_soon %}
+            <div class="movie-card">
+                <img src="https://via.placeholder.com/300x450?text=Coming+Soon"
+                    alt="{{ movie.title }}" />
+                <div class="movie-info">
+                    <h4>{{ movie.title }}</h4>
+                    <p>Releases on: {{ movie.release_date }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p>No upcoming movies listed.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Trending -->
+        <h3 class="section-title">Trending</h3>
+        <p class="section-subtitle">Most popular movies right now</p>
+        <div class="movie-grid">
+            {% for movie in trending %}
+            <div class="movie-card">
+                <img src="https://via.placeholder.com/300x450?text=Trending"
+                    alt="{{ movie.title }}" />
+                <div class="movie-info">
+                    <h4>{{ movie.title }}</h4>
+                    <p>Rating: {{ movie.rating }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p>No trending movies right now.</p>
+            {% endfor %}
+        </div>
+        
     </main>
 
     <footer>
